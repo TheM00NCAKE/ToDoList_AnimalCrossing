@@ -1,0 +1,108 @@
+/* Police Animal Crossing qui a été téléchargé, fichiers disponible dans le dossier static*/
+@font-face {
+    font-family: 'Qlarendon';
+    src: url('/static/qlarendon/qlarendon.otf') format('opentype');
+  }
+input{
+    font-family:Qlarendon;
+}
+
+body{
+    background-color:#9fd2cb;
+    font-family: Qlarendon;
+    color:#757156;
+    background-image: url(/static/img/bg.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+/* Image d'arrière plan défini ici, c'est la feuille de note */
+#bcn{
+    background-image: url(/static/img/tt.png);
+    background-position: center;
+    background-repeat:  repeat;  /*Si le contenu intérieur (dans le div contenu) dépasse la hauteur de l'image, alors celle-ci répète son image à la suite*/
+    background-attachment: local; /*Faire en sorte que celle-ci soit en raccord avec le contenu de la page (scroller à la fois le contenu et l'image*/
+    width:700px; height:526px; 
+    display:block; 
+    margin:auto; 
+    overflow-y:scroll;   /*quand le contenu dépasse 526px, le contenu peut être scroller mais reste dans les div*/
+    overscroll-behavior: none;   /*éviter les comportements indésirables de scroll (trop scroller en haut/en bas (ce qui fait un "bump"))*/
+}
+#topimg{
+    margin-left:9.5%;
+}
+#bottomimg{
+    margin-bottom:-0.5%;
+    margin-left:9.5%;
+}
+#texte{
+    width:180px;
+    height:50px;
+    box-shadow:8px 6px #60aab7;
+    border-color:#1ab7d8;
+}
+/*L'image de ToDo List en haut*/
+#header{
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding-left:1%;
+    height:120px;
+    background-image: url(/static/img/header.png);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+#content{
+    min-height:310px;
+    margin:auto;
+    width:520px;
+    line-height:1.7;
+    font-size:20px;
+    padding:5%;
+    padding-left:7.5%;
+}
+li {
+    list-style-type: none; /*enlever les styles par défaut de li (les points gras pour lister les tâches) */
+  }
+
+hr{
+   margin-left:-4%;
+}
+#boutton:hover,#bouttonA:hover {
+    transform: scale(1.05); /* effet de zoom quand on passe sur les bouttons avec la souris */
+
+}
+a{
+    text-decoration:none;  /*pas de sous-lignage*/
+}
+#boutton,#bouttonA{
+    font-family:Qlarendon;
+    color:#fffae6;
+    display:flex;
+    padding-top:0.6%;
+    justify-content:center;
+    box-shadow:2px 3px #a8651f;
+    width:100px;
+    height:38px;
+    background-color:#d9882d;
+    border-radius:20%;
+    font-size:15px;
+    border:none;
+}
+#boutton{
+    margin-left:80%;
+    border-radius:20%;
+}
+#bouttonA{
+    margin-top:-3%;
+    margin-left:65%;
+}
+#x{
+    color:#757156;
+}
+#boutton a{
+    padding-top:3px;
+    color:#fffae6;
+}
+audio{
+    margin-left:78%;
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+</head>
+<body>
+    <script>
+    //sert à modifier le html lorsque l'on clique sur "modifier"
+    function test(num_tache, url){
+        var x=document.getElementsByClassName(num_tache);
+        var champ_modif=x[0];
+        var tache_ecrit = champ_modif.innerText.split(" | "); //on va prendre le titre et le libellé séparément 
+        if (!tache_ecrit[1]){
+            var libelle = '';
+            tache_ecrit[0] = tache_ecrit[0].slice(0, -2);
+        }
+        else{
+            libelle=tache_ecrit[1];
+        }
+        /*On remplace le html pour directement modifier la tâche sur la même page, au même endroit. Les valeurs par défaut sont les 
+        textes déjà attribués à la tâche, et les boutons sont modifiés pour ajouter 'annuler', 'sauvegarder' (les changements).*/
+        champ_modif.innerHTML = `
+            <form action="${url}" method="post" autocomplete="off">
+                <input type="text" name="t" id="texte" value="${tache_ecrit[0]}" required>
+                <input type="text" name="l" id="texte" value="${libelle}">
+                <button type="submit" id="boutton" style="margin-top:-8%;font-family:Qlarendon;padding-top:2%;" onclick="SauvegarderScroll()">Sauvegarder</button>
+            </form>
+        `;
+        var modiflink=x[1];
+        modiflink.innerHTML="<a id='x' style='margin-left:0%;font-family:Qlarendon;' href='/'  onclick='SauvegarderScroll()'>Annuler</a>";
+    }
+    function SauvegarderScroll() {
+        localStorage.setItem('PositionScrollPage', window.scrollY); //définir un item local (qui normalement reste actif à chaque session)
+        const bcnDiv = document.getElementById('bcn');              //le but est d'enregistrer l'état de scroll de la page et de la feuille de note
+        localStorage.setItem('bcnScrollPosition', bcnDiv.scrollTop); 
+    }
+    function RestaurerScroll() { 
+        const PositionScrollPage = localStorage.getItem('PositionScrollPage');  //on cherche l'item local
+        if (PositionScrollPage) { //vérifier si elle existe (si un scroll a été réalisé)
+            window.scrollTo(0, parseInt(PositionScrollPage));        //la page va aller à la position du scroll, comme si la page n'avait pas rechargé
+            localStorage.removeItem('PositionScrollPage'); // Supprimer l'item local
+        }
+        //fait la même chose pour le div bcn qui contient un élément qui scrolle aussi
+        const bcnScrollPosition = localStorage.getItem('bcnScrollPosition');  
+            if (bcnScrollPosition) {
+                const bcnDiv = document.getElementById('bcn');
+                bcnDiv.scrollTop = parseInt(bcnScrollPosition);
+                localStorage.removeItem('bcnScrollPosition'); 
+            }
+
+    }
+    
+    // S'active quand la page charge, restaure le scroll comme si la page n'avait pas chargé, pour éviter qu'à chaque action, on nous rammène en haut de page
+    document.addEventListener('DOMContentLoaded', function() {
+        RestaurerScroll();
+        });
+
+    </script>
+    <div id="header">
+        <h1>ToDo list</h1>
+    </div>
+    <!--Formulaire pour ajouter des tâches, va appeller une fonction du controller 'add_task'-->
+    <form action="/add_task" method="post" style='text-align:center;' autocomplete="off"> <!--évite de donner des suggestions de remplissage (déjà tapppé par l'utilisateur avant)-->
+        <input id="texte" type="text" name="task" placeholder="Titre de la tâche" required>
+        <input id="texte" type="text" name="libelle" placeholder="Libellé de la tâche (optionnel)" optional> <!--Le libellé est optionnel-->
+        <button type="submit" id="bouttonA">Ajouter</button>
+    </form>
+    <br><br>
+    <!--Div qui contient la feuille (background) et le contenu (les tâches), mais le contenu est encapsulé dans une autre div-->
+    <div id="bcn">
+        <img id="topimg" src="/static/img/pattern1.png"> <!--bande de feuille en haut de la feuille-->
+        <!--Div qui contient les tâches-->
+        <div id="content">
+        <h2 style="text-align:center">Nombre de tâches total : {{nb}}</h2> <!--compteur de tâches, on prend nb qui est un attribut de classe-->
+        {% for tache in tasks|reverse %} <!--On parcours tous les tâches en sens inverse (pour ajouter les plus récentes toutes en haut)-->
+            <li>
+                {% if tache[2] is not none %}
+                <strong class={{tache[0]}} >{{ tache[1] }} | {{ tache[2] }}</strong> <!-- tache = id titre libelle -->
+                {% else %}
+                <strong class={{tache[0]}} > {{ tache[1] }} </strong>
+                {% endif %}
+                <br>
+                <!--<p> qui se comporte comme un lien, mais qui va gérer l'action via JavaScript-->
+                <p id="{{ url_for('update_task', index=tache[0]) }}" class={{tache[0]}} onclick="test(this.className,this.id)">modifier</p>
+                <div id="boutton"> 
+                    <a href="{{ url_for('remove_task', index=tache[0]) }}"  onclick="SauvegarderScroll()" >Supprimer</a>
+                </div>
+                <hr>
+            </li>
+        {% endfor %}
+        </div>
+    <!--Bande de feuille en bas de page, quand tout le contenu a été affiché. Cela permet de donner l'illusion que la page se rallonge à 
+    l'infini parce qu'elle fini par le même pied de page. Les deux bandes sont indépendantes pour les ajouter séparément, tandis que l'image de
+    background pour bcn est répété encore et encore avec le CSS.-->
+    <img id="bottomimg" src="/static/img/pattern1.png">
+    </div>
+    <br>
+</body>
+</html>
